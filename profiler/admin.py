@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import RequestMetric
+from .models.request_metric import RequestMetric
 
 
 @admin.register(RequestMetric)
@@ -20,16 +20,9 @@ class RequestMetricAdmin(admin.ModelAdmin):
     list_filter = (
         "method",
         "status_code",
-        "is_slow",
-        "has_exception",
-        "created_at",
+        "created_at"
     )
 
-    list_filter = (
-        "method",
-        "status_code",
-        "created_at",
-    )
     readonly_fields = list_display
 
     ordering = ("-created_at",)

@@ -1,15 +1,19 @@
 from pathlib import Path
+from dotenv import load_dotenv
+from celery.schedules import crontab
+import os
 
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-SECRET_KEY = 'django-insecure-8*)!%iue3qqv2q@90o1-qy^##r=zh%1ps63&01aogcpkw%vz2#'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -20,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat',
     'profiler',
 ]
 
@@ -56,11 +61,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
-
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -89,3 +97,18 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
+
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+CELERY_TIMEZONE = 'UTC'
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+
+
+CELERY_BEAT_SCHEDULE = {
+    'compute-endpoint-summaries': {
+        'task': 'profiler.tasks.run_aggregation',
+        'schedule': crontab(minute=0),  
+    },
+}

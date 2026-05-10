@@ -1,0 +1,1 @@
+Database Schema: [link](https://drawsql.app/teams/ahmedgader/diagrams/django-api-profiler-monitoring-dashboard)

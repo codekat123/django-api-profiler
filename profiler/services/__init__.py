@@ -1,1 +1,2 @@
 from .request_metric import collect_request_metric
+from .analytics import compute_endpoint_summaries
