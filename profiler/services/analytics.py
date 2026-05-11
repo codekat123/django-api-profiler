@@ -3,16 +3,13 @@ from django.utils import timezone
 from django.db.models import Count, Avg, Max, Min, Q
 from datetime import timedelta
 from ..models import RequestMetric, EndpointSummary
+from ..conf import profiler_settings
 
-
-def _get_window_minutes() -> int:
-    profiler_settings = getattr(settings, "PROFILER", {})
-    return profiler_settings.get("AGGREGATION_WINDOW_MINUTES", 60)
 
 
 def _get_last_completed_window() -> tuple:
     now = timezone.now()
-    window_minutes = _get_window_minutes()
+    window_minutes = profiler_settings.AGGREGATION_WINDOW_MINUTES
 
     minutes_since_epoch = int(now.timestamp() // 60)
     window_start_minutes = (minutes_since_epoch // window_minutes) * window_minutes

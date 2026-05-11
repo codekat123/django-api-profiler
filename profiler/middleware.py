@@ -1,15 +1,10 @@
 import time
 from django.urls import resolve, Resolver404
-from .services import collect_request_metric
-from .db_wrapper import reset_query_log
-
-
-IGNORED_PATHS = [
-    "/admin",
-    "/static",
-    "/favicon.ico",
-]
-
+from .db_wrapper import reset_query_log ,get_query_log
+from .services import build_metric_payload
+from .tasks import ingest_request_metric
+from .conf import profiler_settings
+from .utils import ingest_metric
 
 class ApiProfilerMiddleware:
 
@@ -18,7 +13,7 @@ class ApiProfilerMiddleware:
 
     def __call__(self, request):
 
-        if any(request.path.startswith(path) for path in IGNORED_PATHS):
+        if any(request.path.startswith(path) for path in profiler_settings.IGNORED_PATHS):
             return self.get_response(request)
 
         try:
@@ -44,16 +39,20 @@ class ApiProfilerMiddleware:
             raise
 
         finally:
-            duration_ms = (time.perf_counter() - start_time) * 1000
 
-            collect_request_metric(
-                request=request,
-                response=response,
-                duration_ms=duration_ms,
-                has_exception=has_exception,
-                exception=exception,
+            payload = build_metric_payload(
+                path=request.path,
+                method=request.method,
+                status_code=response.status_code if response else 500,
+                duration_ms= (time.perf_counter() - start_time) * 1000,
                 route=route,
                 view_name=view_name,
+                has_exception=has_exception,
+                exception_type=type(exception).__name__ if exception else None,
+                exception_message=str(exception) if exception else None,
+                queries=get_query_log(),
             )
+
+            ingest_metric(payload)
 
         return response

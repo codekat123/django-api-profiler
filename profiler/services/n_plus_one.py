@@ -1,4 +1,5 @@
 from collections import Counter
+from ..conf import profiler_settings
 import re
 
 def normalize_sql(sql: str) -> str:
@@ -21,7 +22,7 @@ def detect_n_plus_one(queries: list[dict]) -> list[dict]:
     
     duplicates = []
     for pattern, count in counts.items():
-        if count >= 3:  
+        if count >= profiler_settings.N_PLUS_ONE_THRESHOLD:
             duplicates.append({
                 "query_pattern": pattern,
                 "count": count,
