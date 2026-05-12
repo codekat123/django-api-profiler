@@ -1,35 +1,68 @@
 [project]
 name = "django-api-profiler"
-version = "0.1.0"
+version = "0.1.1"
 description = "Lightweight API profiling and endpoint analytics for Django"
 readme = "README.md"
 requires-python = ">=3.10"
-
 authors = [
     { name = "Ahmed" }
 ]
-
 license = { text = "MIT" }
-
+keywords = [
+    "django",
+    "profiling",
+    "monitoring",
+    "observability",
+    "performance",
+    "analytics",
+    "n+1",
+]
+classifiers = [
+    "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 6.0",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Monitoring",
+    "Intended Audience :: Developers",
+]
 dependencies = [
     "django>=4.2",
 ]
 
 [project.optional-dependencies]
-
 async = [
-    "celery>=5.6.3",
-    "redis>=7.4.0",
+    "celery>=5.0",
+    "redis>=4.0",
+    "django-celery-beat>=2.0",
 ]
-
-beat = [
-    "django-celery-beat>=2.9.0",
+webhook = [
+    "requests>=2.28.0",
 ]
-
 postgres = [
-    "psycopg2-binary>=2.9.12",
+    "psycopg2-binary>=2.9",
 ]
+all = [
+    "celery>=5.0",
+    "redis>=4.0",
+    "django-celery-beat>=2.0",
+    "requests>=2.28.0",
+    "psycopg2-binary>=2.9",
+]
+
+[project.urls]
+Homepage = "https://github.com/ahmed/django-api-profiler"
+Repository = "https://github.com/ahmed/django-api-profiler"
+Issues = "https://github.com/ahmed/django-api-profiler/issues"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["profiler"]

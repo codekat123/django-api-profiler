@@ -2,7 +2,6 @@ import time
 from django.urls import resolve, Resolver404
 from .db_wrapper import reset_query_log ,get_query_log
 from .services import build_metric_payload
-from .tasks import ingest_request_metric
 from .conf import profiler_settings
 from .utils import ingest_metric
 

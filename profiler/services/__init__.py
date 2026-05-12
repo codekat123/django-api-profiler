@@ -7,4 +7,7 @@ from .n_plus_one import (
     normalize_sql
 )
 
-from .analytics import compute_endpoint_summaries
+from .analytics import (
+    compute_endpoint_summaries,
+    _calculate_p95,
+)

@@ -7,6 +7,8 @@ logger = logging.getLogger(__name__)
 
 
 def detect_regression(route: str, window_start, window_end) -> list[dict]:
+    from ..tasks import fire_webhook
+
     previous_window_start = window_start - timedelta(
         minutes=profiler_settings.AGGREGATION_WINDOW_MINUTES
     )
@@ -30,13 +32,16 @@ def detect_regression(route: str, window_start, window_end) -> list[dict]:
     regressions = []
 
     if current_summary.avg_response_ms > previous_summary.avg_response_ms * profiler_settings.REGRESSION_RESPONSE_TIME_FACTOR:
-        regressions.append({
+        payload = {
             "type": "response_time",
+            "route": route,
             "previous_avg_ms": previous_summary.avg_response_ms,
             "current_avg_ms": current_summary.avg_response_ms,
-        })
+        }
+        regressions.append(payload)
+        fire_webhook.delay(payload)
         logger.warning(
-            "Response time regression detected on %s: %.2fms → %.2fms",
+            "Response time regression on %s: %.2fms → %.2fms",
             route,
             previous_summary.avg_response_ms,
             current_summary.avg_response_ms,
@@ -46,13 +51,16 @@ def detect_regression(route: str, window_start, window_end) -> list[dict]:
     previous_error_rate = previous_summary.error_count / previous_summary.total_requests
 
     if current_error_rate > previous_error_rate + profiler_settings.REGRESSION_ERROR_RATE_DELTA:
-        regressions.append({
+        payload = {
             "type": "error_rate",
+            "route": route,
             "previous_rate": round(previous_error_rate, 4),
             "current_rate": round(current_error_rate, 4),
-        })
+        }
+        regressions.append(payload)
+        fire_webhook.delay(payload)
         logger.warning(
-            "Error rate regression detected on %s: %.1f%% → %.1f%%",
+            "Error rate regression on %s: %.1f%% → %.1f%%",
             route,
             previous_error_rate * 100,
             current_error_rate * 100,
