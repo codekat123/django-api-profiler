@@ -1,12 +1,14 @@
 from django.conf import settings
 
 _DEFAULTS = {
-    "ASYNC": True,
+    "ASYNC": False,
     "SLOW_REQUEST_THRESHOLD_MS": 1000,
     "AGGREGATION_WINDOW_MINUTES": 60,
     "IGNORED_PATHS": ["/admin", "/static", "/favicon.ico"],
     "N_PLUS_ONE_THRESHOLD": 3,
     "SLOW_QUERY_THRESHOLD_MS": 100,
+    "REGRESSION_RESPONSE_TIME_FACTOR": 2.0,
+    "REGRESSION_ERROR_RATE_DELTA": 0.1,
 }
 
 

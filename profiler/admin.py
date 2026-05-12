@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models.request_metric import RequestMetric
+from .models import RequestMetric , EndpointSummary
 
 
 @admin.register(RequestMetric)
@@ -45,3 +45,36 @@ class RequestMetricAdmin(admin.ModelAdmin):
             color,
             formatted_time
         )
+    
+
+@admin.register(EndpointSummary)
+class EndpointSummaryAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "route",
+        "window_start",
+        "total_requests",
+        "avg_response_ms",
+        "p95_response_ms",
+        "error_count",
+        "slow_count",
+    )
+
+    list_filter = (
+        "window_start",
+        "computed_at",
+    )
+
+    search_fields = ("route",)
+
+    ordering = ("-window_start",)
+
+    readonly_fields = [field.name for field in EndpointSummary._meta.fields]
+
+    date_hierarchy = "window_start"
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False

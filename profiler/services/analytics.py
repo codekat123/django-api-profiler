@@ -4,7 +4,7 @@ from django.db.models import Count, Avg, Max, Min, Q
 from datetime import timedelta
 from ..models import RequestMetric, EndpointSummary
 from ..conf import profiler_settings
-
+from .regression import detect_regression
 
 
 def _get_last_completed_window() -> tuple:
@@ -75,6 +75,13 @@ def compute_endpoint_summaries() -> int:
                 **aggregates,
             }
         )
+
+        regressions = detect_regression(
+            route=route,
+            window_start=window_start,
+            window_end=window_end
+        )
+
 
         count += 1
 

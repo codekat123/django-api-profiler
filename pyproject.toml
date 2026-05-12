@@ -1,14 +1,35 @@
 [project]
 name = "django-api-profiler"
 version = "0.1.0"
-description = "Add your description here"
+description = "Lightweight API profiling and endpoint analytics for Django"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
+
+authors = [
+    { name = "Ahmed" }
+]
+
+license = { text = "MIT" }
+
 dependencies = [
+    "django>=4.2",
+]
+
+[project.optional-dependencies]
+
+async = [
     "celery>=5.6.3",
-    "django>=6.0.5",
-    "django-celery-beat>=2.9.0",
-    "psycopg2-binary>=2.9.12",
-    "python-dotenv>=1.2.2",
     "redis>=7.4.0",
 ]
+
+beat = [
+    "django-celery-beat>=2.9.0",
+]
+
+postgres = [
+    "psycopg2-binary>=2.9.12",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

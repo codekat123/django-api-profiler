@@ -24,6 +24,7 @@ services:
 
   web:
     build: .
+    image: django-api-profiler:latest  
     restart: unless-stopped
     command: >
       sh -c "/src/.venv/bin/python manage.py migrate &&
@@ -41,7 +42,7 @@ services:
         condition: service_healthy
 
   celery:
-    build: .
+    image: django-api-profiler:latest  
     command: uv run celery -A config worker --loglevel=info
     volumes:
       - .:/src
@@ -54,7 +55,7 @@ services:
         condition: service_healthy
 
   celery_beat:
-    build: .
+    image: django-api-profiler:latest
     command: uv run celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
       - .:/src
