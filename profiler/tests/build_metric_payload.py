@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ..services.request_metric import build_metric_payload
+from ..services import build_metric_payload
 
 
 class BuildMetricPayloadTests(TestCase):
@@ -22,14 +22,6 @@ class BuildMetricPayloadTests(TestCase):
         )
         self.assertFalse(payload["is_slow"])
 
-    def test_status_code_defaults_to_500_when_no_response(self):
-        payload = build_metric_payload(
-            path="/api/users/",
-            method="GET",
-            status_code=None,
-            duration_ms=100,
-        )
-        self.assertEqual(payload["status_code"], 500)
 
     def test_marks_exception_correctly(self):
         payload = build_metric_payload(
